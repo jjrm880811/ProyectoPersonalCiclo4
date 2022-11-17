@@ -2,12 +2,13 @@
 
 
 #python
+from typing import  Optional
 
 #Pydantic 
 from pydantic import BaseModel
 
 #Fastapi
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 
 
 #Modelo
@@ -32,6 +33,24 @@ async def root():
 @app.get("/items/{item_id}")
 async def read_item(item_id: int) -> dict:
     return {"item_id": item_id}
+
+
+@app.get("/items/{item_id}/detail")
+def show_item(
+    item_id: int,
+    name: str | None = Query(default=None, max_length=50),
+    price: Optional[float] = Query(None, gt=0),
+    description: Optional[str] = Query(None, min_lenght=1),
+    ):
+
+#Interacción con la db
+    return {
+        "id": item_id,
+        "nombre": name,
+        "price": price,
+        "description": description,
+
+    }
 
 #Base de Datos Simulado
 fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
